@@ -21,7 +21,7 @@
         draw(){//วาดบอล
             document.getElementById("myCanvas").getContext("2d").beginPath();
             document.getElementById("myCanvas").getContext("2d").arc(this.x, this.y, this.Radius, 0, Math.PI*2);
-            document.getElementById("myCanvas").getContext("2d").fillStyle = "#0095DD";
+            document.getElementById("myCanvas").getContext("2d").fillStyle = "orange";
             document.getElementById("myCanvas").getContext("2d").fill();
             document.getElementById("myCanvas").getContext("2d").closePath();
             
@@ -70,7 +70,7 @@
         draw(){//วาดกำแพง
             this.ctx.beginPath()
             this.ctx.rect(this.paddleX,this.height-this.paddleHeight,this.paddleWidth,this.paddleHeight)
-            this.ctx.fillStyle = "#0095DD";
+            this.ctx.fillStyle = "purple";
             this.ctx.fill();
             this.ctx.closePath();
         }
