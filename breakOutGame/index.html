@@ -110,7 +110,8 @@
         constructor(r,c){
             this.canvas = document.getElementById("myCanvas");
             this.ctx = this.canvas.getContext("2d");
-            this.ball = new Ball(this.canvas.width/2,this.canvas.height/2);//สร้างลูกบอล
+            //this.ball = new Ball(this.canvas.width/2,this.canvas.height/2);//สร้างลูกบอล
+            this.ball = [];
             this.paddle = new Paddle();//สร้าง Paddle
             this.brick = [];
             this.row = r;
@@ -120,7 +121,9 @@
             this.score = 0; 
             var _this = this;
             this.interval = setInterval(function () { _this.update(); },10); //ตั้งเวลาโลกอัพเดต  
-
+            for (var i = 0 ; i < 2 ; i++){
+                this.ball[i] = new Ball(Math.floor(Math.random() * this.canvas.width)+1, Math.floor(Math.random() * this.canvas.height)+1);
+            }
             for(var c =0; c<this.column;c++){//สร้าง brick ตามแถวและคอลัมน์
                 this.brick[c] = [];
                 for(var r=0; r<this.row;r++){
@@ -151,38 +154,46 @@
         }
         update(){//อัพเดตโลก
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ball.draw();
-            this.ball.move();
+            //this.ball.draw();
+            //this.ball.move();
+            for (var i = 0 ; i < 2 ; i++){
+                this.ball[i].draw();
+            }
+            for (var i = 0 ; i < 2 ; i++){
+                this.ball[i].move();
+            }
             this.paddle.draw();
             this.drawBricks();
             this.collisionDetection();
             this.drawScore();
             this.drawLives();
-
-            if(this.ball.x + this.ball.speedX > this.canvas.width-this.ball.Radius || this.ball.x + this.ball.speedX  < this.ball.Radius) {//ตรวจสอบการชนระหว่างลูกบอลกับกำแพงขอบข้าง
-                this.ball.bounceX();
-            }
-            if(this.ball.y + this.ball.speedY < this.ball.Radius) {//ตรวจสอบการชนระหว่างลูกบอลกับกำแพงขอบบน
-                this.ball.bounceY();
-            }else if(this.ball.y + this.ball.speedY > this.canvas.height-this.ball.Radius){//ถ้าลูกบอลถูกรับโดย Paddle
-                if( this.ball.x > this.paddle.paddleX && this.ball.x < this.paddle.paddleX + this.paddle.paddleWidth){
-                    this.ball.bounceY();
-                }else{//ถ้ารับลูกบอลไม่ได้
-                    this.live --;//พลังชีวิตหาย
-                    if(this.live === 0){//ถ้าพลังชีวิตหมด
-                        alert("GAME OVER");
-                        document.location.reload();
-                        clearInterval(this.interval); // Needed for Chrome to end game
-                    }else{//นำพลังชีวิตมาสร้างโลกใหม่
-                        this.ball.x = this.canvas.width/2;
-                        this.ball.y = this.canvas.height/2;
-                        this.ball.speedX = 2;
-                        this.ball.speedY = -2;
-                        this.paddle.paddleX = (this.canvas.width-this.paddle.paddleWidth)/2;
-                    }
-                    
+            for (var i = 0 ; i < 2 ; i++){
+                
+                if(this.ball[i].x + this.ball[i].speedX > this.canvas.width-this.ball[i].Radius || this.ball[i].x + this.ball[i].speedX  < this.ball[i].Radius) {//ตรวจสอบการชนระหว่างลูกบอลกับกำแพงขอบข้าง
+                    this.ball[i].bounceX();
                 }
+                if(this.ball[i].y + this.ball[i].speedY < this.ball[i].Radius) {//ตรวจสอบการชนระหว่างลูกบอลกับกำแพงขอบบน
+                    this.ball[i].bounceY();
+                }else if(this.ball[i].y + this.ball[i].speedY > this.canvas.height-this.ball[i].Radius){//ถ้าลูกบอลถูกรับโดย Paddle
+                    if( this.ball[i].x > this.paddle.paddleX && this.ball[i].x < this.paddle.paddleX + this.paddle.paddleWidth){
+                        this.ball[i].bounceY();
+                    }else{//ถ้ารับลูกบอลไม่ได้
+                        this.live --;//พลังชีวิตหาย
+                        if(this.live === 0){//ถ้าพลังชีวิตหมด
+                            alert("GAME OVER");
+                            document.location.reload();
+                            clearInterval(this.interval); // Needed for Chrome to end game
+                        }else{//นำพลังชีวิตมาสร้างโลกใหม่
+                            this.ball[i].x = this.canvas.width/2;
+                            this.ball[i].y = this.canvas.height/2;
+                            this.ball[i].speedX = 2;
+                            this.ball[i].speedY = -2;
+                            this.paddle.paddleX = (this.canvas.width-this.paddle.paddleWidth)/2;
+                        }
+                        
+                    }
 
+                }
             }
         }
         collisionDetection(){//ตรวจสอบว่าลูกบอลชนกับกำแพง
@@ -190,17 +201,19 @@
                 for(var r=0; r<this.row; r++) {
                     this.brickBlock = this.brick[c][r];
                     if(this.brickBlock.status == 1) {//ถ้ากำแพงยังไม่ถูกทำลาย
-                        if(this.ball.x > this.brickBlock.x && this.ball.x < this.brickBlock.x+this.brickBlock.width && this.ball.y > this.brickBlock.y && this.ball.y < this.brickBlock.y+this.brickBlock.height) {
+                        for (var i = 0 ; i < 2 ; i++){
+                        if(this.ball[i].x > this.brickBlock.x && this.ball[i].x < this.brickBlock.x+this.brickBlock.width && this.ball[i].y > this.brickBlock.y && this.ball[i].y < this.brickBlock.y+this.brickBlock.height) {
                             //ถ้ากำแพงถูกชน
-                            this.ball.speedY = -this.ball.speedY;
+                            this.ball[i].speedY = -this.ball[i].speedY;
                             this.brickBlock.status = 0;//กำแพงหายไป
                             this.score ++;//คะแนนเพิ่ม
                             if(this.score == this.row*this.column) {//ถ้ากำแพงถูกทำลายทั้งหมด
                                 alert("YOU WIN, CONGRATULATIONS!");
                                 document.location.reload();
                                 clearInterval(this.interval); // Needed for Chrome to end game
-                    }
+                            }
                         }
+                    }
                     }
                 }
             }
